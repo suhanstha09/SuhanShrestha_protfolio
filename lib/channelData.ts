@@ -75,11 +75,11 @@ export const softSkills = [
 export const quotes = [
   {
     text: 'Code is poetry written for machines, but read by humans.',
-    context: 'On clean code philosophy',
+    context: 'Suhan Shrestha',
   },
   {
-    text: 'Every pixel matters. Every interaction counts.',
-    context: 'On attention to detail',
+    text: 'He who is not contented with what he has, would not be contented with what he would like to have.',
+    context: 'Socrates',
   },
   {
     text: 'The best UI is the one the user never notices.',
