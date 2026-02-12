@@ -114,15 +114,15 @@ export function playStaticNoise(): void {
 
     // Fill buffer with white noise
     for (let i = 0; i < bufferSize; i++) {
-      data[i] = (Math.random() * 2 - 1) * 0.3;
+      data[i] = (Math.random() * 2 - 1) * 0.8;
     }
 
     const source = ctx.createBufferSource();
     const gainNode = ctx.createGain();
 
     source.buffer = buffer;
-    gainNode.gain.setValueAtTime(0.12, ctx.currentTime);
-    gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
+    gainNode.gain.setValueAtTime(0.4, ctx.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
 
     source.connect(gainNode);
     gainNode.connect(ctx.destination);
