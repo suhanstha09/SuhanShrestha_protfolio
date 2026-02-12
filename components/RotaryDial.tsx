@@ -120,19 +120,19 @@ export default function RotaryDial({
   return (
     <div className="flex flex-col items-center gap-1">
       {/* Channel numbers around the dial */}
-      <div className="relative h-[64px] w-[64px]">
+      <div className="relative h-[90px] w-[90px]">
         {/* Tick marks around the dial */}
         {Array.from({ length: totalChannels }, (_, i) => {
           const angle = (i * degreesPerChannel - 90) * (Math.PI / 180);
-          const radius = 27;
-          const x = 32 + radius * Math.cos(angle);
-          const y = 32 + radius * Math.sin(angle);
+          const radius = 38;
+          const x = 45 + radius * Math.cos(angle);
+          const y = 45 + radius * Math.sin(angle);
           const isActive = i + 1 === currentChannel;
 
           return (
             <span
               key={i}
-              className="absolute text-[8px] font-display transition-all duration-200"
+              className="absolute text-[16px] font-display transition-all duration-200"
               style={{
                 left: `${x}px`,
                 top: `${y}px`,

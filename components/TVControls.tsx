@@ -19,18 +19,28 @@ interface TVControlsProps {
   currentChannel: number;
   isPoweredOn: boolean;
   greenMode: boolean;
+  isPlaying: boolean;
+  volume: number;
   onChannelChange: (channel: number) => void;
   onPowerToggle: () => void;
   onPowerLongPress: () => void;
+  onMusicToggle: () => void;
+  onVolumeUp: () => void;
+  onVolumeDown: () => void;
 }
 
 export default function TVControls({
   currentChannel,
   isPoweredOn,
   greenMode,
+  isPlaying,
+  volume,
   onChannelChange,
   onPowerToggle,
   onPowerLongPress,
+  onMusicToggle,
+  onVolumeUp,
+  onVolumeDown,
 }: TVControlsProps) {
   const powerPressTimer = useRef<NodeJS.Timeout | null>(null);
   const longPressTriggered = useRef(false);
@@ -75,7 +85,7 @@ export default function TVControls({
   return (
     <>
       {/* ═══════════ DESKTOP CONTROLS (side bezel panel) ═══════════ */}
-      <div className="hidden md:flex flex-col items-center gap-6 py-6 px-3">
+      <div className="hidden md:flex w-full flex-col items-center gap-6 py-6 px-3">
         {/* Brand label */}
         <div className="text-center">
           <p
@@ -188,27 +198,78 @@ export default function TVControls({
           </motion.button>
         </div>
 
-        {/* Volume knob (decorative) */}
-        <div className="flex flex-col items-center gap-2">
-          <div
-            className="h-10 w-10 rounded-full"
-            style={{
-              background: 'linear-gradient(145deg, #3a3530, #1a1612)',
-              border: '1px solid rgba(255,255,255,0.03)',
-              boxShadow: '0 2px 4px rgba(0,0,0,0.4)',
-            }}
-          >
-            <div
-              className="mt-2 mx-auto h-1 w-3 rounded-full"
-              style={{ background: '#555' }}
-            />
+        {/* Volume knob — click to play/pause music */}
+        <div className="flex flex-col items-center gap-1">
+          <div className="relative h-[64px] w-[64px] flex items-center justify-center">
+            <motion.button
+              className="rounded-full relative cursor-pointer"
+              style={{
+                width: 40,
+                height: 40,
+                background: 'linear-gradient(145deg, #3a3530, #1a1612)',
+                border: isPlaying
+                  ? `2px solid ${accentColor}55`
+                  : '2px solid rgba(255,255,255,0.05)',
+                boxShadow: isPlaying
+                  ? `0 4px 8px rgba(0,0,0,0.5), 0 0 12px ${accentColor}44, inset 0 1px 2px rgba(255,255,255,0.05)`
+                  : '0 4px 8px rgba(0,0,0,0.5), inset 0 1px 2px rgba(255,255,255,0.05)',
+              }}
+              onClick={onMusicToggle}
+              whileTap={{ scale: 0.9 }}
+              aria-label={isPlaying ? 'Pause music' : 'Play music'}
+              title="Grateful — Neffex"
+            >
+              {isPlaying ? (
+                <svg width="12" height="12" viewBox="0 0 24 24" fill={accentColor}>
+                  <rect x="6" y="4" width="4" height="16" />
+                  <rect x="14" y="4" width="4" height="16" />
+                </svg>
+              ) : (
+                <div
+                  className="mx-auto h-1 w-3 rounded-full"
+                  style={{ background: '#555' }}
+                />
+              )}
+            </motion.button>
           </div>
           <span
-            className="text-[8px] uppercase tracking-wider"
-            style={{ color: '#8a7a6a' }}
+            className="text-[9px] uppercase tracking-[0.2em] font-display"
+            style={{ color: isPlaying ? accentColor : '#8a7a6a' }}
           >
             Vol
           </span>
+        </div>
+
+        {/* Volume Up / Down */}
+        <div className="flex flex-col items-center gap-1">
+          <motion.button
+            className="tv-button"
+            style={{ width: 28, height: 28 }}
+            onClick={onVolumeUp}
+            whileTap={{ scale: 0.9 }}
+            aria-label="Volume Up"
+          >
+            <svg width="10" height="10" viewBox="0 0 24 24" fill={accentColor}>
+              <path d="M12 4l8 8H4z" />
+            </svg>
+          </motion.button>
+          <span
+            className="text-[14px] font-display tabular-nums"
+            style={{ color: accentColor }}
+          >
+            {Math.round(volume * 100)}
+          </span>
+          <motion.button
+            className="tv-button"
+            style={{ width: 28, height: 28 }}
+            onClick={onVolumeDown}
+            whileTap={{ scale: 0.9 }}
+            aria-label="Volume Down"
+          >
+            <svg width="10" height="10" viewBox="0 0 24 24" fill={accentColor}>
+              <path d="M12 20l-8-8h16z" />
+            </svg>
+          </motion.button>
         </div>
 
         {/* Brand logo area at bottom */}
@@ -286,43 +347,50 @@ export default function TVControls({
               </svg>
             </motion.button>
 
-            {/* Channel Down */}
+            {/* Volume Down */}
             <motion.button
               className="tv-button"
-              style={{ width: 44, height: 44 }}
-              onClick={handleChannelDown}
+              style={{ width: 36, height: 36 }}
+              onClick={onVolumeDown}
               whileTap={{ scale: 0.9 }}
-              aria-label="Channel Down"
+              aria-label="Volume Down"
             >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill={accentColor}>
-                <path d="M12 20l-8-8h16z" />
-              </svg>
+              <span className="text-xs font-bold" style={{ color: accentColor }}>−</span>
             </motion.button>
 
-            {/* Channel Number Display */}
-            <div
-              className="flex h-12 w-16 items-center justify-center rounded-lg font-display text-2xl"
-              style={{
-                background: '#0a0a0a',
-                color: accentColor,
-                boxShadow: `inset 0 2px 8px rgba(0,0,0,0.8), 0 0 10px ${accentColor}22`,
-                textShadow: `0 0 10px ${accentColor}`,
-              }}
-            >
-              {currentChannel}
-            </div>
-
-            {/* Channel Up */}
+            {/* Music Play/Pause */}
             <motion.button
               className="tv-button"
-              style={{ width: 44, height: 44 }}
-              onClick={handleChannelUp}
+              style={{
+                width: 44,
+                height: 44,
+                boxShadow: isPlaying ? `0 0 10px ${accentColor}33` : undefined,
+              }}
+              onClick={onMusicToggle}
               whileTap={{ scale: 0.9 }}
-              aria-label="Channel Up"
+              aria-label={isPlaying ? 'Pause music' : 'Play music'}
             >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill={accentColor}>
-                <path d="M12 4l8 8H4z" />
-              </svg>
+              {isPlaying ? (
+                <svg width="16" height="16" viewBox="0 0 24 24" fill={accentColor}>
+                  <rect x="6" y="4" width="4" height="16" />
+                  <rect x="14" y="4" width="4" height="16" />
+                </svg>
+              ) : (
+                <svg width="16" height="16" viewBox="0 0 24 24" fill={accentColor}>
+                  <path d="M8 5v14l11-7z" />
+                </svg>
+              )}
+            </motion.button>
+
+            {/* Volume Up */}
+            <motion.button
+              className="tv-button"
+              style={{ width: 36, height: 36 }}
+              onClick={onVolumeUp}
+              whileTap={{ scale: 0.9 }}
+              aria-label="Volume Up"
+            >
+              <span className="text-xs font-bold" style={{ color: accentColor }}>+</span>
             </motion.button>
 
             {/* Quick channel select (1-8) */}

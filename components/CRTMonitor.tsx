@@ -43,6 +43,11 @@ export default function CRTMonitor() {
   const [greenMode, setGreenMode] = useState(false);
   const [audioInitialized, setAudioInitialized] = useState(false);
 
+  // ═══════════ Music Player State ═══════════
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [volume, setVolume] = useState(0.5);
+  const musicRef = useRef<HTMLAudioElement | null>(null);
+
   // Track the actual displayed channel (for smooth transitions)
   const [displayChannel, setDisplayChannel] = useState(1);
   const staticTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -80,6 +85,47 @@ export default function CRTMonitor() {
       }, 2500);
     }
   }, [isPoweredOn, ensureAudio]);
+
+  // ═══════════ Music Controls ═══════════
+  const handleMusicToggle = useCallback(() => {
+    if (!musicRef.current) {
+      musicRef.current = new Audio('/NEFFEX - Grateful [Copyright Free] No.54.mp3');
+      musicRef.current.loop = true;
+      musicRef.current.volume = volume;
+    }
+    if (isPlaying) {
+      musicRef.current.pause();
+      setIsPlaying(false);
+    } else {
+      musicRef.current.play().then(() => setIsPlaying(true)).catch(() => {});
+    }
+  }, [isPlaying, volume]);
+
+  const handleVolumeUp = useCallback(() => {
+    setVolume((prev) => {
+      const next = Math.min(1, prev + 0.1);
+      if (musicRef.current) musicRef.current.volume = next;
+      return next;
+    });
+  }, []);
+
+  const handleVolumeDown = useCallback(() => {
+    setVolume((prev) => {
+      const next = Math.max(0, prev - 0.1);
+      if (musicRef.current) musicRef.current.volume = next;
+      return next;
+    });
+  }, []);
+
+  // Cleanup music on unmount
+  useEffect(() => {
+    return () => {
+      if (musicRef.current) {
+        musicRef.current.pause();
+        musicRef.current = null;
+      }
+    };
+  }, []);
 
   // ═══════════ Green Mode Easter Egg ═══════════
   const handlePowerLongPress = useCallback(() => {
@@ -314,16 +360,21 @@ export default function CRTMonitor() {
 
         {/* ═══════════ SIDE CONTROL PANEL ═══════════ */}
         <div
-          className="hidden md:flex w-[90px] lg:w-[100px] flex-shrink-0 border-l"
+          className="hidden md:flex w-[110px] lg:w-[120px] flex-shrink-0 border-l"
           style={{ borderColor: 'rgba(255,255,255,0.03)' }}
         >
           <TVControls
             currentChannel={currentChannel}
             isPoweredOn={isPoweredOn}
             greenMode={greenMode}
+            isPlaying={isPlaying}
+            volume={volume}
             onChannelChange={handleChannelChange}
             onPowerToggle={handlePowerToggle}
             onPowerLongPress={handlePowerLongPress}
+            onMusicToggle={handleMusicToggle}
+            onVolumeUp={handleVolumeUp}
+            onVolumeDown={handleVolumeDown}
           />
         </div>
 
@@ -333,9 +384,14 @@ export default function CRTMonitor() {
             currentChannel={currentChannel}
             isPoweredOn={isPoweredOn}
             greenMode={greenMode}
+            isPlaying={isPlaying}
+            volume={volume}
             onChannelChange={handleChannelChange}
             onPowerToggle={handlePowerToggle}
             onPowerLongPress={handlePowerLongPress}
+            onMusicToggle={handleMusicToggle}
+            onVolumeUp={handleVolumeUp}
+            onVolumeDown={handleVolumeDown}
           />
         </div>
 
