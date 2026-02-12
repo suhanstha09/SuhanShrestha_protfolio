@@ -185,7 +185,7 @@ export default function RotaryDial({
 
       <span
         className="text-[9px] uppercase tracking-[0.2em] font-display"
-        style={{ color: '#666' }}
+        style={{ color: '#8a7a6a' }}
       >
         Channel
       </span>

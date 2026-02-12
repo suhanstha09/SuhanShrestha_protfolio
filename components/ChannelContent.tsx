@@ -658,7 +658,7 @@ function ProofOfWorkChannel({
           Proof of Work
         </h2>
         <p className="text-xs mt-1" style={{ color: dim }}>
-          GitHub Activity &mdash; @{personalInfo.github}
+          GitHub Activity &mdash; @{personalInfo.github} &mdash; {new Date().getFullYear()}
         </p>
       </motion.div>
 
@@ -689,7 +689,7 @@ function ProofOfWorkChannel({
                 {totalContributions}
               </p>
               <p className="text-[10px] uppercase tracking-wider" style={{ color: dim }}>
-                Push Events (90d)
+                Push Events ({new Date().getFullYear()})
               </p>
             </div>
           </motion.div>

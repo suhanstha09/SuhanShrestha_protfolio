@@ -363,7 +363,7 @@ export default function CRTMonitor() {
         >
           <p
             className="text-[7px] tracking-widest uppercase"
-            style={{ color: '#2a2318' }}
+            style={{ color: '#7a6a5a' }}
           >
             Model CRT-2026-SS
           </p>

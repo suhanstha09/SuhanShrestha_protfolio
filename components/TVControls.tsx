@@ -80,13 +80,13 @@ export default function TVControls({
         <div className="text-center">
           <p
             className="font-display text-[10px] tracking-[0.3em] uppercase"
-            style={{ color: '#555' }}
+            style={{ color: '#8a7a6a' }}
           >
             SUHAN
           </p>
           <p
             className="font-display text-[7px] tracking-[0.15em] uppercase mt-0.5"
-            style={{ color: '#444' }}
+            style={{ color: '#7a6a5a' }}
           >
             CRT-2026
           </p>
@@ -132,7 +132,7 @@ export default function TVControls({
 
           <span
             className="text-[8px] uppercase tracking-wider"
-            style={{ color: '#555' }}
+            style={{ color: '#8a7a6a' }}
           >
             Power
           </span>
@@ -205,7 +205,7 @@ export default function TVControls({
           </div>
           <span
             className="text-[8px] uppercase tracking-wider"
-            style={{ color: '#555' }}
+            style={{ color: '#8a7a6a' }}
           >
             Vol
           </span>
@@ -215,17 +215,17 @@ export default function TVControls({
         <div className="mt-auto text-center">
           <div
             className="w-12 h-px mx-auto mb-2"
-            style={{ background: '#333' }}
+            style={{ background: '#5a4a3a' }}
           />
           <p
             className="text-[7px] tracking-widest uppercase"
-            style={{ color: '#444' }}
+            style={{ color: '#7a6a5a' }}
           >
             Made in
           </p>
           <p
             className="text-[7px] tracking-widest uppercase"
-            style={{ color: '#444' }}
+            style={{ color: '#7a6a5a' }}
           >
             Nepal
           </p>

@@ -73,10 +73,10 @@ export async function fetchGitHubRepos(): Promise<GitHubRepo[]> {
 
 /**
  * Fetch contribution/commit activity using the GitHub Events API.
- * Returns a simplified contribution calendar with intensity levels.
+ * Returns a simplified contribution calendar for the current year.
  * 
  * Note: The Events API returns up to 300 events / 90 days.
- * We process these into a calendar-like grid.
+ * We process these into a calendar-like grid for the current year.
  */
 export async function fetchContributionData(): Promise<ContributionWeek[]> {
   try {
@@ -105,22 +105,33 @@ export async function fetchContributionData(): Promise<ContributionWeek[]> {
       }
     });
 
-    // Generate 52 weeks of calendar data (364 days)
-    const weeks: ContributionWeek[] = [];
+    // Generate calendar data for the current year (Jan 1 to today)
     const today = new Date();
-    const startDate = new Date(today);
-    startDate.setDate(startDate.getDate() - 363); // 52 weeks back
-    // Align to Sunday
+    const currentYear = today.getFullYear();
+    const startDate = new Date(currentYear, 0, 1); // January 1st of current year
+    // Align to Monday of that week (or Sunday, depending on preference)
     startDate.setDate(startDate.getDate() - startDate.getDay());
 
     // Find max contributions for scaling
     const maxCount = Math.max(1, ...Object.values(dateCounts));
 
-    for (let w = 0; w < 52; w++) {
+    // Calculate total weeks from aligned start to today
+    const msPerDay = 24 * 60 * 60 * 1000;
+    const totalDays = Math.ceil((today.getTime() - startDate.getTime()) / msPerDay) + 1;
+    const totalWeeks = Math.ceil(totalDays / 7);
+
+    const weeks: ContributionWeek[] = [];
+    for (let w = 0; w < totalWeeks; w++) {
       const days: ContributionDay[] = [];
       for (let d = 0; d < 7; d++) {
         const currentDate = new Date(startDate);
         currentDate.setDate(currentDate.getDate() + w * 7 + d);
+        
+        // Skip future dates
+        if (currentDate > today) {
+          break;
+        }
+        
         const dateStr = currentDate.toISOString().split('T')[0];
         const count = dateCounts[dateStr] || 0;
 
@@ -132,7 +143,9 @@ export async function fetchContributionData(): Promise<ContributionWeek[]> {
 
         days.push({ date: dateStr, count, level });
       }
-      weeks.push({ days });
+      if (days.length > 0) {
+        weeks.push({ days });
+      }
     }
 
     return weeks;
@@ -143,26 +156,33 @@ export async function fetchContributionData(): Promise<ContributionWeek[]> {
   }
 }
 
-/** Generate an empty 52-week calendar grid as fallback */
+/** Generate an empty calendar grid for the current year as fallback */
 function generateEmptyCalendar(): ContributionWeek[] {
   const weeks: ContributionWeek[] = [];
   const today = new Date();
-  const startDate = new Date(today);
-  startDate.setDate(startDate.getDate() - 363);
+  const currentYear = today.getFullYear();
+  const startDate = new Date(currentYear, 0, 1);
   startDate.setDate(startDate.getDate() - startDate.getDay());
 
-  for (let w = 0; w < 52; w++) {
+  const msPerDay = 24 * 60 * 60 * 1000;
+  const totalDays = Math.ceil((today.getTime() - startDate.getTime()) / msPerDay) + 1;
+  const totalWeeks = Math.ceil(totalDays / 7);
+
+  for (let w = 0; w < totalWeeks; w++) {
     const days: ContributionDay[] = [];
     for (let d = 0; d < 7; d++) {
       const currentDate = new Date(startDate);
       currentDate.setDate(currentDate.getDate() + w * 7 + d);
+      if (currentDate > today) break;
       days.push({
         date: currentDate.toISOString().split('T')[0],
         count: 0,
         level: 0,
       });
     }
-    weeks.push({ days });
+    if (days.length > 0) {
+      weeks.push({ days });
+    }
   }
   return weeks;
 }
