@@ -59,7 +59,7 @@ export default function ChannelContent({
       <motion.div
         key={channel}
         className="h-full w-full overflow-y-auto crt-scrollbar p-4 md:p-6 lg:p-8"
-        style={{ fontSize: '1.15rem' }}
+        style={{ zoom: 1.35 }}
         variants={contentVariants}
         initial="hidden"
         animate="visible"
