@@ -350,45 +350,39 @@ function SkillsChannel({
         variants={itemVariants}
       />
 
-      {/* Skills with animated bars */}
-      <motion.div className="space-y-3" variants={contentVariants}>
-        {technicalSkills.map((skill, index) => (
-          <motion.div
-            key={skill.name}
-            className="group"
-            variants={itemVariants}
+      {/* Skills grouped by category */}
+      {Object.entries(
+        technicalSkills.reduce<Record<string, typeof technicalSkills>>((acc, skill) => {
+          (acc[skill.category] ??= []).push(skill);
+          return acc;
+        }, {})
+      ).map(([category, skills]) => (
+        <motion.div key={category} className="space-y-2" variants={itemVariants}>
+          <h3
+            className="font-display text-xs uppercase tracking-wider"
+            style={{ color: dim }}
           >
-            <div className="flex items-center justify-between mb-1">
-              <span className="text-xs md:text-sm crt-text" style={{ color: accent }}>
-                {skill.name}
-              </span>
-              <span className="text-[10px] font-display" style={{ color: dim }}>
-                {skill.level}%
-              </span>
-            </div>
-            <div
-              className="h-2 w-full rounded-full overflow-hidden"
-              style={{ background: `${accent}11` }}
-            >
+            {category}
+          </h3>
+          <div className="flex flex-wrap gap-2">
+            {skills.map((skill) => (
               <motion.div
-                className="h-full rounded-full"
+                key={skill.name}
+                className="rounded-lg px-4 py-2"
                 style={{
-                  background: `linear-gradient(90deg, ${dim}, ${accent})`,
-                  boxShadow: `0 0 8px ${accent}66`,
+                  background: `${accent}08`,
+                  border: `1px solid ${accent}22`,
                 }}
-                initial={{ width: 0 }}
-                animate={{ width: `${skill.level}%` }}
-                transition={{ duration: 1, delay: index * 0.1, ease: 'easeOut' }}
-              />
-            </div>
-            <div className="flex justify-between mt-0.5">
-              <span className="text-[9px] uppercase tracking-wider" style={{ color: `${accent}55` }}>
-                {skill.category}
-              </span>
-            </div>
-          </motion.div>
-        ))}
-      </motion.div>
+                whileHover={{ scale: 1.05, borderColor: `${accent}55` }}
+              >
+                <span className="text-xs md:text-sm crt-text" style={{ color: accent }}>
+                  {skill.name}
+                </span>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
+      ))}
 
       {/* Non-technical skills */}
       <motion.div variants={itemVariants} className="mt-4">
@@ -409,7 +403,6 @@ function SkillsChannel({
               }}
               whileHover={{ scale: 1.05, borderColor: `${accent}55` }}
             >
-              <span className="text-base">{skill.icon}</span>
               <span className="text-xs crt-text" style={{ color: accent }}>
                 {skill.name}
               </span>

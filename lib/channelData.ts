@@ -66,9 +66,9 @@ export const technicalSkills = [
 
 /** Non-technical skills */
 export const softSkills = [
-  { name: 'Leadership', icon: '🎯' },
-  { name: 'Communication', icon: '🗣️' },
-  { name: 'Musician', icon: '🎵' },
+  { name: 'Leadership', icon: '' },
+  { name: 'Communication', icon: '' },
+  { name: 'Musician', icon: '' },
 ];
 
 /** Personal quotes for the quotes channel */
