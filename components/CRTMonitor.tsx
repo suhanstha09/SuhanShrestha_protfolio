@@ -150,8 +150,7 @@ export default function CRTMonitor() {
       // Clamp channel to valid range
       const ch = Math.max(1, Math.min(newChannel, channels.length));
 
-      // Play sound effects
-      playChannelBeep();
+      // Play static/white noise burst for channel change
       playStaticNoise();
 
       // Show static overlay for 300ms
