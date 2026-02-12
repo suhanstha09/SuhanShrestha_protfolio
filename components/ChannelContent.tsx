@@ -49,7 +49,7 @@ const itemVariants = {
 };
 
 /** Scroll hint that appears at bottom and fades on scroll */
-function ScrollHint({ color }: { color: string }) {
+function ScrollHint({ color, position = 'bottom' }: { color: string; position?: 'top' | 'bottom' }) {
   const [visible, setVisible] = useState(true);
 
   useEffect(() => {
@@ -59,31 +59,51 @@ function ScrollHint({ color }: { color: string }) {
 
   if (!visible) return null;
 
+  const isTop = position === 'top';
+
   return (
     <motion.div
-      className="absolute bottom-4 left-1/2 -translate-x-1/2 z-30 flex flex-col items-center gap-1"
+      className={`absolute ${isTop ? 'top-4' : 'bottom-4'} left-1/2 -translate-x-1/2 z-30 flex flex-col items-center gap-1`}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ delay: 1 }}
     >
+      {isTop && (
+        <motion.svg
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke={color}
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          animate={{ y: [0, 4, 0] }}
+          transition={{ duration: 1.5, repeat: Infinity }}
+        >
+          <polyline points="6 9 12 15 18 9" />
+        </motion.svg>
+      )}
       <span className="text-[15px] uppercase tracking-wider" style={{ color: `${color}` }}>
         Scroll down for more
       </span>
-      <motion.svg
-        width="20"
-        height="20"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke={color}
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        animate={{ y: [0, 4, 0] }}
-        transition={{ duration: 1.5, repeat: Infinity }}
-      >
-        <polyline points="6 9 12 15 18 9" />
-      </motion.svg>
+      {!isTop && (
+        <motion.svg
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke={color}
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          animate={{ y: [0, 4, 0] }}
+          transition={{ duration: 1.5, repeat: Infinity }}
+        >
+          <polyline points="6 9 12 15 18 9" />
+        </motion.svg>
+      )}
     </motion.div>
   );
 }
@@ -93,7 +113,7 @@ export default function ChannelContent({
   greenMode,
 }: ChannelContentProps) {
   const accentColor = greenMode ? '#33ff33' : '#ff9f43';
-  const scrollableChannels = [1, 2, 3, 4, 5, 8];
+  const scrollableChannels = [2, 3, 4, 7, 8];
   const dimColor = greenMode ? '#22aa22' : '#cc7722';
 
   return (
@@ -139,7 +159,7 @@ export default function ChannelContent({
           <ContactChannel accent={accentColor} dim={dimColor} />
         )}
         {scrollableChannels.includes(channel) && (
-          <ScrollHint color={accentColor} />
+          <ScrollHint color={accentColor} position={channel === 8 ? 'top' : 'bottom'} />
         )}
       </motion.div>
     </AnimatePresence>
