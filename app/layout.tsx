@@ -33,6 +33,21 @@ export const metadata: Metadata = {
     title: 'Suhan Shrestha | Full Stack Developer',
     description: 'Retro CRT TV Portfolio — Full Stack Developer',
     type: 'website',
+    url: 'https://suhan-shrestha-protfolio.vercel.app',
+    images: [
+      {
+        url: 'https://suhan-shrestha-protfolio.vercel.app/logo.png',
+        width: 1200,
+        height: 630,
+        alt: 'Suhan Shrestha | Full Stack Developer',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Suhan Shrestha | Full Stack Developer',
+    description: 'Retro CRT TV Portfolio — Full Stack Developer',
+    images: ['https://suhan-shrestha-protfolio.vercel.app/logo.png'],
   },
 };
 
