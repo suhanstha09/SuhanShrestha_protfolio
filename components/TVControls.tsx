@@ -219,17 +219,13 @@ export default function TVControls({
               aria-label={isPlaying ? 'Pause music' : 'Play music'}
               title="Grateful — Neffex"
             >
-              {isPlaying ? (
-                <svg width="12" height="12" viewBox="0 0 24 24" fill={accentColor}>
-                  <rect x="6" y="4" width="4" height="16" />
-                  <rect x="14" y="4" width="4" height="16" />
-                </svg>
-              ) : (
-                <div
-                  className="mx-auto h-1 w-3 rounded-full"
-                  style={{ background: '#555' }}
-                />
-              )}
+              <div
+                className="mx-auto h-1 w-3 rounded-full"
+                style={{
+                  background: isPlaying ? accentColor : '#555',
+                  boxShadow: isPlaying ? `0 0 4px ${accentColor}` : 'none',
+                }}
+              />
             </motion.button>
           </div>
           <span
