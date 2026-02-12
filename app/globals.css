@@ -344,23 +344,15 @@ body {
 }
 
 /* ═══════════════════════════════════════════════════
-   Scrollbar (CRT themed)
+   Scrollbar — hidden but still scrollable
    ═══════════════════════════════════════════════════ */
-.crt-scrollbar::-webkit-scrollbar {
-  width: 6px;
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
-.crt-scrollbar::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.3);
-}
-
-.crt-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(255, 159, 67, 0.3);
-  border-radius: 3px;
-}
-
-.crt-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 159, 67, 0.5);
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
 }
 
 /* ═══════════════════════════════════════════════════

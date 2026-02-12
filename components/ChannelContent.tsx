@@ -59,7 +59,7 @@ export default function ChannelContent({
     <AnimatePresence mode="wait">
       <motion.div
         key={channel}
-        className="h-full w-full overflow-y-auto crt-scrollbar p-4 md:p-6 lg:p-8"
+        className="h-full w-full overflow-y-auto scrollbar-hide p-4 md:p-6 lg:p-8"
         variants={contentVariants}
         initial="hidden"
         animate="visible"
