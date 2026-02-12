@@ -37,6 +37,37 @@ body {
 }
 
 /* ═══════════════════════════════════════════════════
+   Linux Terminal Background
+   ═══════════════════════════════════════════════════ */
+.terminal-bg {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.12;
+}
+
+.terminal-bg pre {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  line-height: 1.6;
+  color: #33ff33;
+  white-space: pre;
+  padding: 20px;
+  animation: terminalScroll 40s linear infinite;
+}
+
+@keyframes terminalScroll {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-50%); }
+}
+
+.green-mode .terminal-bg pre {
+  color: #33ff33;
+}
+
+/* ═══════════════════════════════════════════════════
    CRT Screen Effects
    ═══════════════════════════════════════════════════ */
 

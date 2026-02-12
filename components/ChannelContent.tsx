@@ -9,7 +9,7 @@
  * ═══════════════════════════════════════════════════
  */
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   personalInfo,
@@ -48,11 +48,52 @@ const itemVariants = {
   visible: { opacity: 1, x: 0 },
 };
 
+/** Scroll hint that appears at bottom and fades on scroll */
+function ScrollHint({ color }: { color: string }) {
+  const [visible, setVisible] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setVisible(false), 5000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (!visible) return null;
+
+  return (
+    <motion.div
+      className="fixed bottom-14 md:bottom-6 left-1/2 -translate-x-1/2 z-30 flex flex-col items-center gap-1"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ delay: 1 }}
+    >
+      <span className="text-[10px] uppercase tracking-wider" style={{ color: `${color}88` }}>
+        Scroll down for more
+      </span>
+      <motion.svg
+        width="14"
+        height="14"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke={color}
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        animate={{ y: [0, 4, 0] }}
+        transition={{ duration: 1.5, repeat: Infinity }}
+      >
+        <polyline points="6 9 12 15 18 9" />
+      </motion.svg>
+    </motion.div>
+  );
+}
+
 export default function ChannelContent({
   channel,
   greenMode,
 }: ChannelContentProps) {
   const accentColor = greenMode ? '#33ff33' : '#ff9f43';
+  const scrollableChannels = [1, 2, 3, 4, 5, 8];
   const dimColor = greenMode ? '#22aa22' : '#cc7722';
 
   return (
@@ -96,6 +137,9 @@ export default function ChannelContent({
         )}
         {channel === 8 && (
           <ContactChannel accent={accentColor} dim={dimColor} />
+        )}
+        {scrollableChannels.includes(channel) && (
+          <ScrollHint color={accentColor} />
         )}
       </motion.div>
     </AnimatePresence>

@@ -218,12 +218,68 @@ export default function CRTMonitor() {
 
   return (
     <div
-      className={`flex h-screen w-screen items-center justify-center bg-[#050505] p-2 md:p-4 lg:p-8 ${
+      className={`relative flex h-screen w-screen items-center justify-center bg-[#050505] p-2 md:p-4 lg:p-8 ${
         greenMode ? 'green-mode' : ''
       }`}
       role="application"
       aria-label="CRT Television Portfolio - Suhan Shrestha"
     >
+      {/* ═══════════ LINUX TERMINAL BACKGROUND ═══════════ */}
+      <div className="terminal-bg" aria-hidden="true">
+        <pre>{`user@arch:~$ neofetch
+                   -${'`'}                 user@arch
+                  .o+${'`'}                ----------
+                 ${'`'}ooo/                OS: Arch Linux x86_64
+                ${'`'}+oooo:               Host: Portfolio v2.0
+               ${'`'}+oooooo:              Kernel: 6.7.4-arch1-1
+               -+oooooo+:             Uptime: forever
+             ${'`'}/:-:++oooo+:            Packages: npm (42)
+            ${'`'}/++++/+++++++:           Shell: zsh 5.9
+           ${'`'}/++++++++++++++:          Resolution: 1920x1080
+          ${'`'}/+++ooooooooooooo/${'`'}        WM: Next.js
+         ./ooosssso++osssssso+${'`'}       Theme: CRT-Retro [Dark]
+        .oossssso-${'````'}/ossssss+${'`'}      Terminal: portfolio-term
+       -osssssso.      :ssssssso.     CPU: React 19 @ 60fps
+      :osssssss/        osssso+++.    Memory: 256MB / infinity
+     /ossssssss/        +ssssooo/-
+   ${'`'}/ossssso+/:-        -:/+osssso+-
+  ${'`'}+sso+:-${'`'}                 ${'`'}.-/+oso:
+ ${'`'}++:.                       ${'`'}-/+/
+ .${'`'}                             ${'`'}/
+user@arch:~$ cat /etc/motd
++======================================+
+|     Welcome to Suhan's Terminal      |
+|   Full Stack Developer Portfolio     |
++======================================+
+user@arch:~$ systemctl status portfolio
+  portfolio.service - Portfolio Web App
+     Loaded: loaded
+     Active: active (running)
+     Since: 2026-01-01
+user@arch:~$ ls -la ~/projects
+drwxr-xr-x  2 user user 4096 Feb 12 portfolio/
+drwxr-xr-x  2 user user 4096 Feb 12 react-apps/
+drwxr-xr-x  2 user user 4096 Feb 12 next-projects/
+-rw-r--r--  1 user user  420 Feb 12 .vimrc
+user@arch:~$ uptime
+ 00:00:00 up forever, load average: 0.42, 0.69, 1.00
+user@arch:~$ fortune
+"Code is poetry written for machines, but read by humans."
+user@arch:~$ btop
+  CPU [====================..........] 68%
+  MEM [==========....................] 34%
+  SWP [..............................]  0%
+user@arch:~$ echo "Building the future..."
+Building the future...
+user@arch:~$ sudo pacman -Syu
+:: Synchronizing package databases...
+ core is up to date
+ extra is up to date
+:: Starting full system upgrade...
+ there is nothing to do
+user@arch:~$ _`}
+        </pre>
+      </div>
       {/* ═══════════ TV BEZEL FRAME ═══════════ */}
       <div className="tv-bezel relative flex h-full max-h-[700px] w-full max-w-[1100px] rounded-2xl md:rounded-3xl overflow-hidden">
         {/* ═══════════ SCREEN AREA ═══════════ */}
@@ -431,6 +487,7 @@ export default function CRTMonitor() {
         <span>↑↓ Channel</span>
         <span>1-8 Direct</span>
         <span>Hold Power 3s = Green Mode</span>
+        <span>Press Vol = Music</span>
       </div>
     </div>
   );
