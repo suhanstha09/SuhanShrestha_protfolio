@@ -24,6 +24,7 @@ import {
   languageColors,
   type GitHubRepo,
   type ContributionWeek,
+  type ContributionData,
 } from '@/lib/githubApi';
 
 interface ChannelContentProps {
@@ -608,13 +609,9 @@ function ProofOfWorkChannel({
   const [totalContributions, setTotalContributions] = useState(0);
 
   useEffect(() => {
-    fetchContributionData().then((data) => {
-      setWeeks(data);
-      const total = data.reduce(
-        (sum, week) => sum + week.days.reduce((s, d) => s + d.count, 0),
-        0
-      );
-      setTotalContributions(total);
+    fetchContributionData().then((data: ContributionData) => {
+      setWeeks(data.weeks);
+      setTotalContributions(data.totalContributions);
       setLoading(false);
     });
   }, []);

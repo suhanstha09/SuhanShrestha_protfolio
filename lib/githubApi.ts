@@ -37,6 +37,12 @@ export interface ContributionWeek {
   days: ContributionDay[];
 }
 
+/** Full contribution data response */
+export interface ContributionData {
+  weeks: ContributionWeek[];
+  totalContributions: number;
+}
+
 /**
  * Fetch public repositories for the user, excluding specified repos.
  * Sorted by most recently updated.
@@ -72,96 +78,80 @@ export async function fetchGitHubRepos(): Promise<GitHubRepo[]> {
 }
 
 /**
- * Fetch contribution/commit activity using the GitHub Events API.
- * Returns a simplified contribution calendar for the current year.
- * 
- * Note: The Events API returns up to 300 events / 90 days.
- * We process these into a calendar-like grid for the current year.
+ * Fetch contribution data directly from GitHub's contribution calendar page.
+ * Scrapes the public HTML endpoint which contains exact contribution counts
+ * and intensity levels, matching what's shown on the GitHub profile.
  */
-export async function fetchContributionData(): Promise<ContributionWeek[]> {
+export async function fetchContributionData(): Promise<ContributionData> {
   try {
-    // Fetch multiple pages of events to get more data
-    const pages = await Promise.all(
-      [1, 2, 3].map((page) =>
-        fetch(
-          `${GITHUB_API_BASE}/users/${GITHUB_USERNAME}/events?per_page=100&page=${page}`,
-          {
-            headers: { Accept: 'application/vnd.github.v3+json' },
-            next: { revalidate: 3600 },
-          }
-        ).then((r) => (r.ok ? r.json() : []))
-      )
+    const currentYear = new Date().getFullYear();
+    const response = await fetch(
+      `https://github.com/users/${GITHUB_USERNAME}/contributions?from=${currentYear}-01-01&to=${currentYear}-12-31`,
+      { next: { revalidate: 3600 } }
     );
 
-    // Flatten all events and count by date
-    const allEvents = pages.flat();
-    const dateCounts: Record<string, number> = {};
+    if (!response.ok) {
+      throw new Error(`GitHub contributions page error: ${response.status}`);
+    }
 
-    // Count actual commits within each PushEvent (not just 1 per push)
-    // and also count other contribution-type events
-    allEvents.forEach((event: { type: string; created_at: string; payload?: { size?: number; commits?: unknown[] } }) => {
-      const date = event.created_at.split('T')[0];
-      if (event.type === 'PushEvent') {
-        // Each PushEvent can contain multiple commits
-        const commitCount = event.payload?.size || event.payload?.commits?.length || 1;
-        dateCounts[date] = (dateCounts[date] || 0) + commitCount;
-      } else if (
-        event.type === 'CreateEvent' ||
-        event.type === 'IssuesEvent' ||
-        event.type === 'PullRequestEvent' ||
-        event.type === 'PullRequestReviewEvent'
-      ) {
-        dateCounts[date] = (dateCounts[date] || 0) + 1;
+    const html = await response.text();
+
+    // Extract total contributions from the heading (e.g. "158 contributions in 2026")
+    const totalMatch = html.match(/(\d+)\s+contributions?\s+in\s+\d{4}/);
+    const totalContributions = totalMatch ? parseInt(totalMatch[1], 10) : 0;
+
+    // Parse contribution cells: extract data-date and data-level from <td> elements
+    const cellRegex = /data-date="(\d{4}-\d{2}-\d{2})"[^>]*data-level="(\d)"/g;
+    const dateMap: Record<string, number> = {};
+    let match;
+    while ((match = cellRegex.exec(html)) !== null) {
+      dateMap[match[1]] = parseInt(match[2], 10);
+    }
+
+    // Parse tooltip text for actual contribution counts
+    const tooltipRegex = /for="contribution-day-component-(\d+)-(\d+)"[^>]*>(\d+)\s+contribution|No contributions/g;
+    const countMap: Record<string, number> = {};
+    // Use a different approach: match each tool-tip and extract count + linked date
+    const tooltipDetailRegex = /for="(contribution-day-component-\d+-\d+)"[^>]*class="[^"]*">([\s\S]*?)<\/tool-tip>/g;
+    let tipMatch;
+    while ((tipMatch = tooltipDetailRegex.exec(html)) !== null) {
+      const tipId = tipMatch[1];
+      const tipText = tipMatch[2].trim();
+      // Find the corresponding td with this id
+      const tdRegex = new RegExp(`id="${tipId}"[^>]*data-date="(\\d{4}-\\d{2}-\\d{2})"`);
+      const tdMatch = tdRegex.exec(html);
+      if (tdMatch) {
+        const date = tdMatch[1];
+        const countMatch = tipText.match(/^(\d+)\s+contribution/);
+        countMap[date] = countMatch ? parseInt(countMatch[1], 10) : 0;
       }
-    });
+    }
 
-    // Generate calendar data for the current year (Jan 1 to today)
-    const today = new Date();
-    const currentYear = today.getFullYear();
-    const jan1 = new Date(currentYear, 0, 1); // January 1st of current year
-    // Align to Sunday of the week containing Jan 1
+    // Build weekly grid (GitHub uses Sun-Sat columns, 53 weeks max)
+    const jan1 = new Date(currentYear, 0, 1);
     const startDate = new Date(jan1);
-    startDate.setDate(startDate.getDate() - startDate.getDay());
-
-    // Find max contributions for scaling
-    const maxCount = Math.max(1, ...Object.values(dateCounts));
-
-    // Show the full year (52 weeks), marking future dates as empty
-    const totalWeeks = 53;
+    startDate.setDate(startDate.getDate() - startDate.getDay()); // align to Sunday
 
     const weeks: ContributionWeek[] = [];
-    for (let w = 0; w < totalWeeks; w++) {
+    for (let w = 0; w < 53; w++) {
       const days: ContributionDay[] = [];
       for (let d = 0; d < 7; d++) {
         const currentDate = new Date(startDate);
         currentDate.setDate(currentDate.getDate() + w * 7 + d);
-        
         const dateStr = currentDate.toISOString().split('T')[0];
-        
-        // Dates before Jan 1 or after today get level 0
-        if (currentDate < jan1 || currentDate > today) {
-          days.push({ date: dateStr, count: 0, level: 0 });
-          continue;
-        }
-        
-        const count = dateCounts[dateStr] || 0;
 
-        // Calculate intensity level (0-4)
-        let level = 0;
-        if (count > 0) {
-          level = Math.min(4, Math.ceil((count / maxCount) * 4));
-        }
+        const level = dateMap[dateStr] ?? 0;
+        const count = countMap[dateStr] ?? 0;
 
         days.push({ date: dateStr, count, level });
       }
       weeks.push({ days });
     }
 
-    return weeks;
+    return { weeks, totalContributions };
   } catch (error) {
     console.error('Failed to fetch contribution data:', error);
-    // Return empty calendar on error
-    return generateEmptyCalendar();
+    return { weeks: generateEmptyCalendar(), totalContributions: 0 };
   }
 }
 
