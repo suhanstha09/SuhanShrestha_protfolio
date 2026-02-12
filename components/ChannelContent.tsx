@@ -19,10 +19,10 @@ import {
   quotes,
 } from '@/lib/channelData';
 import {
-  fetchGitHubRepos,
+  fetchPinnedRepos,
   fetchContributionData,
   languageColors,
-  type GitHubRepo,
+  type PinnedRepo,
   type ContributionWeek,
   type ContributionData,
 } from '@/lib/githubApi';
@@ -446,12 +446,12 @@ function ProjectsChannel({
   accent: string;
   dim: string;
 }) {
-  const [repos, setRepos] = useState<GitHubRepo[]>([]);
+  const [repos, setRepos] = useState<PinnedRepo[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchGitHubRepos()
+    fetchPinnedRepos()
       .then((data) => {
         setRepos(data);
         setLoading(false);
@@ -475,7 +475,7 @@ function ProjectsChannel({
           Projects
         </h2>
         <p className="text-xs mt-1" style={{ color: dim }}>
-          github.com/{personalInfo.github}
+          Pinned on github.com/{personalInfo.github}
         </p>
       </motion.div>
 
@@ -523,8 +523,8 @@ function ProjectsChannel({
         >
           {repos.map((repo) => (
             <motion.a
-              key={repo.id}
-              href={repo.html_url}
+              key={repo.fullName}
+              href={repo.url}
               target="_blank"
               rel="noopener noreferrer"
               className="repo-card rounded-lg p-4 block"
@@ -550,6 +550,15 @@ function ProjectsChannel({
                 </svg>
               </div>
 
+              {repo.owner !== 'suhanstha09' && (
+                <p
+                  className="text-[10px] mb-1 opacity-60"
+                  style={{ color: dim }}
+                >
+                  {repo.owner}/{repo.name}
+                </p>
+              )}
+
               <p
                 className="text-[11px] leading-relaxed mb-3 line-clamp-2"
                 style={{ color: `${accent}99` }}
@@ -570,8 +579,8 @@ function ProjectsChannel({
                     {repo.language}
                   </span>
                 )}
-                <span className="flex items-center gap-1">⭐ {repo.stargazers_count}</span>
-                <span className="flex items-center gap-1">🔱 {repo.forks_count}</span>
+                <span className="flex items-center gap-1">⭐ {repo.stars}</span>
+                <span className="flex items-center gap-1">🔱 {repo.forks}</span>
               </div>
             </motion.a>
           ))}
