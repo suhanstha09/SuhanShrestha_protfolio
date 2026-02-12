@@ -20,7 +20,9 @@ export async function GET() {
       throw new Error(`GitHub error: ${response.status}`);
     }
 
-    const html = await response.text();
+    const rawHtml = await response.text();
+    // Normalize whitespace so multi-line attributes don't break regex matching
+    const html = rawHtml.replace(/\s+/g, ' ');
 
     // Extract total contributions from heading (e.g. "158 contributions in 2026")
     const totalMatch = html.match(/(\d+)\s+contributions?\s+in\s+\d{4}/);
@@ -36,20 +38,25 @@ export async function GET() {
 
     // Parse tooltip text for actual contribution counts per day
     const countMap: Record<string, number> = {};
-    const tooltipDetailRegex =
-      /for="(contribution-day-component-\d+-\d+)"[^>]*class="[^"]*">([\s\S]*?)<\/tool-tip>/g;
+    // Match: id="contribution-day-component-X-Y" ... data-date="YYYY-MM-DD"
+    // Then find: for="contribution-day-component-X-Y" ...>N contributions on ...
+    const tdCellRegex = /id="(contribution-day-component-\d+-\d+)"[^>]*data-date="(\d{4}-\d{2}-\d{2})"/g;
+    const idToDate: Record<string, string> = {};
+    let tdCellMatch;
+    while ((tdCellMatch = tdCellRegex.exec(html)) !== null) {
+      idToDate[tdCellMatch[1]] = tdCellMatch[2];
+    }
+
+    // Now match tooltips: for="contribution-day-component-X-Y" ...>TEXT</tool-tip>
+    const tipRegex = /for="(contribution-day-component-\d+-\d+)"[^>]*>([^<]*)<\/tool-tip>/g;
     let tipMatch;
-    while ((tipMatch = tooltipDetailRegex.exec(html)) !== null) {
+    while ((tipMatch = tipRegex.exec(html)) !== null) {
       const tipId = tipMatch[1];
       const tipText = tipMatch[2].trim();
-      const tdRegex = new RegExp(
-        `id="${tipId}"[^>]*data-date="(\\d{4}-\\d{2}-\\d{2})"`
-      );
-      const tdMatch = tdRegex.exec(html);
-      if (tdMatch) {
-        const date = tdMatch[1];
-        const countMatch = tipText.match(/^(\d+)\s+contribution/);
-        countMap[date] = countMatch ? parseInt(countMatch[1], 10) : 0;
+      const date = idToDate[tipId];
+      if (date) {
+        const numMatch = tipText.match(/^(\d+)\s+contribution/);
+        countMap[date] = numMatch ? parseInt(numMatch[1], 10) : 0;
       }
     }
 
