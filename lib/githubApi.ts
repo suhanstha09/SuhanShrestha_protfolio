@@ -97,10 +97,20 @@ export async function fetchContributionData(): Promise<ContributionWeek[]> {
     const allEvents = pages.flat();
     const dateCounts: Record<string, number> = {};
 
-    // Count push events per day (closest to "commits")
-    allEvents.forEach((event: { type: string; created_at: string }) => {
+    // Count actual commits within each PushEvent (not just 1 per push)
+    // and also count other contribution-type events
+    allEvents.forEach((event: { type: string; created_at: string; payload?: { size?: number; commits?: unknown[] } }) => {
+      const date = event.created_at.split('T')[0];
       if (event.type === 'PushEvent') {
-        const date = event.created_at.split('T')[0];
+        // Each PushEvent can contain multiple commits
+        const commitCount = event.payload?.size || event.payload?.commits?.length || 1;
+        dateCounts[date] = (dateCounts[date] || 0) + commitCount;
+      } else if (
+        event.type === 'CreateEvent' ||
+        event.type === 'IssuesEvent' ||
+        event.type === 'PullRequestEvent' ||
+        event.type === 'PullRequestReviewEvent'
+      ) {
         dateCounts[date] = (dateCounts[date] || 0) + 1;
       }
     });
@@ -108,17 +118,16 @@ export async function fetchContributionData(): Promise<ContributionWeek[]> {
     // Generate calendar data for the current year (Jan 1 to today)
     const today = new Date();
     const currentYear = today.getFullYear();
-    const startDate = new Date(currentYear, 0, 1); // January 1st of current year
-    // Align to Monday of that week (or Sunday, depending on preference)
+    const jan1 = new Date(currentYear, 0, 1); // January 1st of current year
+    // Align to Sunday of the week containing Jan 1
+    const startDate = new Date(jan1);
     startDate.setDate(startDate.getDate() - startDate.getDay());
 
     // Find max contributions for scaling
     const maxCount = Math.max(1, ...Object.values(dateCounts));
 
-    // Calculate total weeks from aligned start to today
-    const msPerDay = 24 * 60 * 60 * 1000;
-    const totalDays = Math.ceil((today.getTime() - startDate.getTime()) / msPerDay) + 1;
-    const totalWeeks = Math.ceil(totalDays / 7);
+    // Show the full year (52 weeks), marking future dates as empty
+    const totalWeeks = 53;
 
     const weeks: ContributionWeek[] = [];
     for (let w = 0; w < totalWeeks; w++) {
@@ -127,12 +136,14 @@ export async function fetchContributionData(): Promise<ContributionWeek[]> {
         const currentDate = new Date(startDate);
         currentDate.setDate(currentDate.getDate() + w * 7 + d);
         
-        // Skip future dates
-        if (currentDate > today) {
-          break;
+        const dateStr = currentDate.toISOString().split('T')[0];
+        
+        // Dates before Jan 1 or after today get level 0
+        if (currentDate < jan1 || currentDate > today) {
+          days.push({ date: dateStr, count: 0, level: 0 });
+          continue;
         }
         
-        const dateStr = currentDate.toISOString().split('T')[0];
         const count = dateCounts[dateStr] || 0;
 
         // Calculate intensity level (0-4)
@@ -143,9 +154,7 @@ export async function fetchContributionData(): Promise<ContributionWeek[]> {
 
         days.push({ date: dateStr, count, level });
       }
-      if (days.length > 0) {
-        weeks.push({ days });
-      }
+      weeks.push({ days });
     }
 
     return weeks;
@@ -159,30 +168,22 @@ export async function fetchContributionData(): Promise<ContributionWeek[]> {
 /** Generate an empty calendar grid for the current year as fallback */
 function generateEmptyCalendar(): ContributionWeek[] {
   const weeks: ContributionWeek[] = [];
-  const today = new Date();
-  const currentYear = today.getFullYear();
+  const currentYear = new Date().getFullYear();
   const startDate = new Date(currentYear, 0, 1);
   startDate.setDate(startDate.getDate() - startDate.getDay());
 
-  const msPerDay = 24 * 60 * 60 * 1000;
-  const totalDays = Math.ceil((today.getTime() - startDate.getTime()) / msPerDay) + 1;
-  const totalWeeks = Math.ceil(totalDays / 7);
-
-  for (let w = 0; w < totalWeeks; w++) {
+  for (let w = 0; w < 53; w++) {
     const days: ContributionDay[] = [];
     for (let d = 0; d < 7; d++) {
       const currentDate = new Date(startDate);
       currentDate.setDate(currentDate.getDate() + w * 7 + d);
-      if (currentDate > today) break;
       days.push({
         date: currentDate.toISOString().split('T')[0],
         count: 0,
         level: 0,
       });
     }
-    if (days.length > 0) {
-      weeks.push({ days });
-    }
+    weeks.push({ days });
   }
   return weeks;
 }

@@ -689,7 +689,7 @@ function ProofOfWorkChannel({
                 {totalContributions}
               </p>
               <p className="text-[10px] uppercase tracking-wider" style={{ color: dim }}>
-                Push Events ({new Date().getFullYear()})
+                Contributions ({new Date().getFullYear()})
               </p>
             </div>
           </motion.div>
@@ -706,12 +706,14 @@ function ProofOfWorkChannel({
                   if (weeks.length === 0) return null;
                   const monthLabels: { label: string; position: number }[] = [];
                   const allMonths = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                  const currentYear = new Date().getFullYear();
                   let lastMonth = -1;
                   weeks.forEach((week, wi) => {
                     if (week.days.length > 0) {
                       const d = new Date(week.days[0].date);
                       const m = d.getMonth();
-                      if (m !== lastMonth) {
+                      // Only show months from the current year
+                      if (m !== lastMonth && d.getFullYear() === currentYear) {
                         monthLabels.push({ label: allMonths[m], position: wi });
                         lastMonth = m;
                       }
@@ -800,7 +802,7 @@ function ProofOfWorkChannel({
         variants={itemVariants}
       >
         {`$ git log --oneline --since="${new Date().getFullYear()}-01-01" | wc -l
-> ${totalContributions} events tracked in ${new Date().getFullYear()}
+> ${totalContributions} contributions in ${new Date().getFullYear()}
 > Consistency is key. Ship daily.`}
       </motion.pre>
     </motion.div>
@@ -1080,7 +1082,7 @@ function ContactChannel({
             href={link.href}
             target={link.label !== 'Email' ? '_blank' : undefined}
             rel="noopener noreferrer"
-            className="flex items-center gap-4 rounded-lg p-4 transition-all duration-300 block"
+            className="flex items-center gap-4 rounded-lg p-4 transition-all duration-300"
             style={{
               background: `${accent}05`,
               border: `1px solid ${accent}22`,
