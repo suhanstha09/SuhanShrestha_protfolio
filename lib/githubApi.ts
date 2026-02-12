@@ -6,6 +6,7 @@
  */
 
 const GITHUB_USERNAME = 'suhanstha09';
+const GITHUB_API_BASE = 'https://api.github.com';
 
 /** Pinned repo data shape (from our API route) */
 export interface PinnedRepo {
