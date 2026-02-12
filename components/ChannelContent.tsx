@@ -61,18 +61,18 @@ function ScrollHint({ color }: { color: string }) {
 
   return (
     <motion.div
-      className="fixed bottom-14 md:bottom-6 left-1/2 -translate-x-1/2 z-30 flex flex-col items-center gap-1"
+      className="absolute bottom-4 left-1/2 -translate-x-1/2 z-30 flex flex-col items-center gap-1"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ delay: 1 }}
     >
-      <span className="text-[10px] uppercase tracking-wider" style={{ color: `${color}88` }}>
+      <span className="text-[15px] uppercase tracking-wider" style={{ color: `${color}` }}>
         Scroll down for more
       </span>
       <motion.svg
-        width="14"
-        height="14"
+        width="20"
+        height="20"
         viewBox="0 0 24 24"
         fill="none"
         stroke={color}

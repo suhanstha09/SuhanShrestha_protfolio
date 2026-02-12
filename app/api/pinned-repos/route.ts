@@ -2,8 +2,16 @@ import { NextResponse } from 'next/server';
 
 const GITHUB_USERNAME = 'suhanstha09';
 
-/** Excluded pinned repos (case-insensitive match on repo name) */
-const EXCLUDED = ['netflixclone', 'suhan-dropbox-clone', 'netflix-clone', 'dropbox-clone'];
+/** Repos to exclude (case-insensitive match on repo name) */
+const EXCLUDED = ['netflixclone', 'suhan-dropbox-clone', 'netflix-clone', 'dropbox-clone', 'suhanstha09'];
+
+/** Featured repos to display — add repo names here to pin them */
+const FEATURED_REPOS = [
+  '_CodeForImpact_LCCsMeisters_CareerCraft_',
+  'milesmorales_landonorris-clone-',
+  'suhan-portofoilo_UI_experimentation_',
+  'SuhanShrestha_protfolio',
+];
 
 interface PinnedRepo {
   owner: string;
@@ -18,102 +26,36 @@ interface PinnedRepo {
 
 export async function GET() {
   try {
-    // Fetch the GitHub profile page
-    const response = await fetch(`https://github.com/${GITHUB_USERNAME}`, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (compatible; PortfolioBot/1.0)',
-        Accept: 'text/html',
-      },
-      next: { revalidate: 3600 },
-    });
-
-    if (!response.ok) {
-      throw new Error(`GitHub profile fetch error: ${response.status}`);
-    }
-
-    const html = await response.text();
-
-    // Extract the pinned repos section
-    // Pinned repos are in elements with class "pinned-item-list-item-content"
-    // Each has a link like /owner/repo
-    const pinnedRepos: PinnedRepo[] = [];
-
-    // Match pinned repo blocks — GitHub wraps each in a div with class containing "pinned-item-list-item"
-    // The repo link is in an <a> with href like /owner/repo or /username/repo
-    const pinnedSection = html.match(
-      /class="js-pinned-items-reorder-container"[\s\S]*?<\/ol>/
-    );
-
-    if (!pinnedSection) {
-      // Fallback: try to find pinned items directly
-      console.log('Could not find pinned section wrapper, trying direct approach');
-    }
-
-    const searchIn = pinnedSection ? pinnedSection[0] : html;
-
-    // Find all pinned repo links — they follow the pattern:
-    // <a href="/owner/repo" ...>
-    // within pinned-item-list-item containers
-    const repoPattern =
-      /class="[^"]*pinned-item-list-item-content[^"]*"[\s\S]*?<a\s+href="\/([^"]+\/[^"]+)"[^>]*>[\s\S]*?<span class="repo">([^<]+)<\/span>/g;
-
-    let match;
-    const foundRepos: { owner: string; name: string }[] = [];
-
-    while ((match = repoPattern.exec(searchIn)) !== null) {
-      const fullPath = match[1].trim();
-      const parts = fullPath.split('/');
-      if (parts.length === 2) {
-        foundRepos.push({ owner: parts[0], name: parts[1] });
-      }
-    }
-
-    // Fallback: simpler pattern if the above doesn't work
-    if (foundRepos.length === 0) {
-      const simplePattern =
-        /pinned-item-list-item[\s\S]*?href="\/([^"\/]+)\/([^"\/]+)"/g;
-      while ((match = simplePattern.exec(searchIn)) !== null) {
-        const owner = match[1].trim();
-        const name = match[2].trim();
-        // Avoid duplicates
-        if (!foundRepos.some((r) => r.owner === owner && r.name === name)) {
-          foundRepos.push({ owner, name });
-        }
-      }
-    }
-
-    // Filter out excluded repos
-    const filteredRepos = foundRepos.filter(
-      (r) =>
-        !EXCLUDED.includes(r.name.toLowerCase()) &&
-        !EXCLUDED.includes(r.name)
-    );
-
-    // Fetch details for each pinned repo via GitHub REST API
+    // Fetch featured repos directly from GitHub REST API
     const repoDetails = await Promise.all(
-      filteredRepos.map(async ({ owner, name }) => {
+      FEATURED_REPOS.map(async (name) => {
         try {
           const repoRes = await fetch(
-            `https://api.github.com/repos/${owner}/${name}`,
+            `https://api.github.com/repos/${GITHUB_USERNAME}/${name}`,
             {
               headers: {
                 Accept: 'application/vnd.github.v3+json',
                 'User-Agent': 'Mozilla/5.0 (compatible; PortfolioBot/1.0)',
               },
-              next: { revalidate: 3600 },
+              next: { revalidate: 600 },
             }
           );
-          if (!repoRes.ok) return null;
+
+          if (!repoRes.ok) {
+            // Try as a forked repo — check if it's from another owner
+            return null;
+          }
+
           const data = await repoRes.json();
           return {
-            owner: data.owner?.login || owner,
+            owner: data.owner?.login || GITHUB_USERNAME,
             name: data.name || name,
-            fullName: data.full_name || `${owner}/${name}`,
+            fullName: data.full_name || `${GITHUB_USERNAME}/${name}`,
             description: data.description || null,
             language: data.language || null,
             stars: data.stargazers_count || 0,
             forks: data.forks_count || 0,
-            url: data.html_url || `https://github.com/${owner}/${name}`,
+            url: data.html_url || `https://github.com/${GITHUB_USERNAME}/${name}`,
           } as PinnedRepo;
         } catch {
           return null;
@@ -121,11 +63,51 @@ export async function GET() {
       })
     );
 
-    const finalRepos = repoDetails.filter(Boolean) as PinnedRepo[];
+    // If featured repos are empty or too few, also fetch recent repos
+    let finalRepos = repoDetails.filter(Boolean) as PinnedRepo[];
+
+    if (finalRepos.length < 4) {
+      try {
+        const allReposRes = await fetch(
+          `https://api.github.com/users/${GITHUB_USERNAME}/repos?sort=updated&per_page=10`,
+          {
+            headers: {
+              Accept: 'application/vnd.github.v3+json',
+              'User-Agent': 'Mozilla/5.0 (compatible; PortfolioBot/1.0)',
+            },
+            next: { revalidate: 600 },
+          }
+        );
+
+        if (allReposRes.ok) {
+          const allRepos = await allReposRes.json();
+          const existingNames = new Set(finalRepos.map((r) => r.name.toLowerCase()));
+
+          for (const data of allRepos) {
+            if (finalRepos.length >= 6) break;
+            const name = (data.name || '').toLowerCase();
+            if (EXCLUDED.includes(name) || existingNames.has(name)) continue;
+            existingNames.add(name);
+            finalRepos.push({
+              owner: data.owner?.login || GITHUB_USERNAME,
+              name: data.name,
+              fullName: data.full_name,
+              description: data.description || null,
+              language: data.language || null,
+              stars: data.stargazers_count || 0,
+              forks: data.forks_count || 0,
+              url: data.html_url,
+            });
+          }
+        }
+      } catch {
+        // Silently fail — we already have some repos
+      }
+    }
 
     return NextResponse.json({ repos: finalRepos });
   } catch (error) {
-    console.error('Failed to fetch pinned repos:', error);
+    console.error('Failed to fetch repos:', error);
     return NextResponse.json({ repos: [] }, { status: 500 });
   }
 }
