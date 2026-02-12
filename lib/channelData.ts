@@ -27,7 +27,7 @@ export const channels: Channel[] = [
 export const personalInfo = {
   name: 'Suhan Shrestha',
   title: 'Full Stack Developer',
-  bio: `Frontend developer with 1 year of experience transitioning to full-stack. Specialized in building responsive, component-based UIs with React/Next.js. Strong eye for UI/UX design and pixel-perfect implementation. Currently expanding backend skills with Django and Node.js while maintaining expertise in modern frontend development and design tools.`,
+  bio: `Frontend developer with 1 year of experience transitioning to full-stack. Specialized in building responsive, component-based UIs with React/Next.js. Strong eye for UI/UX design and pixel-perfect implementation. Currently expanding backend skills with Django and Node.js while maintaining expertise in modern frontend development and design tools. Outside of the tech stuff i do music play in bands as mostly a bassist also love to travel alot.`,
   email: 'scubashrestha4@gmail.com',
   location: 'Butwal, Nepal',
   linkedin: 'https://www.linkedin.com/in/suhan-shrestha-9223b1247/',
