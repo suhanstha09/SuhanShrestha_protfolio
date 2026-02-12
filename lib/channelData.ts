@@ -82,20 +82,16 @@ export const quotes = [
     context: 'Socrates',
   },
   {
-    text: 'The best UI is the one the user never notices.',
-    context: 'On intuitive design',
+    text: 'How could I dirt of the deepest trenches on earth dream about stars.',
+    context: 'Suhan Shrestha',
   },
   {
-    text: 'From frontend to full-stack — the journey never stops.',
-    context: 'On continuous learning',
+    text: 'She\'s the sunflower for which the sun shines',
+    context: 'Suhan Shrestha',
   },
   {
     text: 'Build things that matter. Ship things that work.',
-    context: 'On practical development',
-  },
-  {
-    text: 'Design is not just what it looks like. Design is how it works.',
-    context: 'On product thinking',
+    context: 'Suhan Shrestha',
   },
 ];
 
