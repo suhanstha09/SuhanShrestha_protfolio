@@ -69,8 +69,9 @@ export default function CRTMonitor() {
       // POWER OFF — screen collapses
       playPowerOff();
       // Stop music when powering off
-      if (musicRef.current && isPlaying) {
+      if (musicRef.current) {
         musicRef.current.pause();
+        musicRef.current.currentTime = 0;
         setIsPlaying(false);
       }
       setIsShuttingDown(true);
@@ -94,7 +95,7 @@ export default function CRTMonitor() {
   // ═══════════ Music Controls ═══════════
   const handleMusicToggle = useCallback(() => {
     if (!musicRef.current) {
-      musicRef.current = new Audio('/NEFFEX - Grateful [Copyright Free] No.54.mp3');
+      musicRef.current = new Audio('/music.mp3');
       musicRef.current.loop = true;
       musicRef.current.volume = volume;
     }

@@ -29,6 +29,13 @@ export const metadata: Metadata = {
     'Frontend Developer',
   ],
   authors: [{ name: 'Suhan Shrestha' }],
+  icons: {
+    icon: [
+      { url: '/favicon.ico', sizes: '64x64' },
+      { url: '/sunflower-32.png', sizes: '32x32', type: 'image/png' },
+    ],
+    apple: '/sunflower-192.png',
+  },
   openGraph: {
     title: 'Suhan Shrestha | Full Stack Developer',
     description: 'Retro CRT TV Portfolio — Full Stack Developer',
