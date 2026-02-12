@@ -5,10 +5,19 @@
  * ═══════════════════════════════════════════════════
  */
 
-import { excludedRepos } from './channelData';
-
 const GITHUB_USERNAME = 'suhanstha09';
-const GITHUB_API_BASE = 'https://api.github.com';
+
+/** Pinned repo data shape (from our API route) */
+export interface PinnedRepo {
+  owner: string;
+  name: string;
+  fullName: string;
+  description: string | null;
+  language: string | null;
+  stars: number;
+  forks: number;
+  url: string;
+}
 
 /** Repository data shape */
 export interface GitHubRepo {
@@ -44,35 +53,20 @@ export interface ContributionData {
 }
 
 /**
- * Fetch public repositories for the user, excluding specified repos.
- * Sorted by most recently updated.
+ * Fetch pinned repositories from our server-side API route,
+ * which scrapes GitHub's profile page for pinned repos
+ * (excluding netflix clone and dropbox clone).
  */
-export async function fetchGitHubRepos(): Promise<GitHubRepo[]> {
+export async function fetchPinnedRepos(): Promise<PinnedRepo[]> {
   try {
-    const response = await fetch(
-      `${GITHUB_API_BASE}/users/${GITHUB_USERNAME}/repos?sort=updated&per_page=30&type=owner`,
-      {
-        headers: {
-          Accept: 'application/vnd.github.v3+json',
-        },
-        next: { revalidate: 3600 }, // Cache for 1 hour
-      }
-    );
-
+    const response = await fetch('/api/pinned-repos');
     if (!response.ok) {
-      throw new Error(`GitHub API error: ${response.status}`);
+      throw new Error(`Pinned repos API error: ${response.status}`);
     }
-
-    const repos: GitHubRepo[] = await response.json();
-
-    // Filter out excluded repos and forks
-    return repos.filter(
-      (repo) =>
-        !excludedRepos.includes(repo.name.toLowerCase()) &&
-        !excludedRepos.includes(repo.name)
-    );
+    const data = await response.json();
+    return data.repos || [];
   } catch (error) {
-    console.error('Failed to fetch GitHub repos:', error);
+    console.error('Failed to fetch pinned repos:', error);
     return [];
   }
 }
