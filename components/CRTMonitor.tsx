@@ -68,6 +68,11 @@ export default function CRTMonitor() {
     if (isPoweredOn) {
       // POWER OFF — screen collapses
       playPowerOff();
+      // Stop music when powering off
+      if (musicRef.current && isPlaying) {
+        musicRef.current.pause();
+        setIsPlaying(false);
+      }
       setIsShuttingDown(true);
       setTimeout(() => {
         setIsPoweredOn(false);
