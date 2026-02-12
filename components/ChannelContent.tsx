@@ -700,19 +700,37 @@ function ProofOfWorkChannel({
             variants={itemVariants}
           >
             <div className="min-w-[700px]">
-              {/* Month labels */}
+              {/* Month labels — dynamically computed from data */}
               <div className="flex mb-1 ml-8">
-                {['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'].map(
-                  (month) => (
-                    <span
-                      key={month}
-                      className="text-[9px] flex-1"
-                      style={{ color: dim }}
-                    >
-                      {month}
-                    </span>
-                  )
-                )}
+                {(() => {
+                  if (weeks.length === 0) return null;
+                  const monthLabels: { label: string; position: number }[] = [];
+                  const allMonths = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                  let lastMonth = -1;
+                  weeks.forEach((week, wi) => {
+                    if (week.days.length > 0) {
+                      const d = new Date(week.days[0].date);
+                      const m = d.getMonth();
+                      if (m !== lastMonth) {
+                        monthLabels.push({ label: allMonths[m], position: wi });
+                        lastMonth = m;
+                      }
+                    }
+                  });
+                  return monthLabels.map((ml, i) => {
+                    const nextPos = i < monthLabels.length - 1 ? monthLabels[i + 1].position : weeks.length;
+                    const span = nextPos - ml.position;
+                    return (
+                      <span
+                        key={`${ml.label}-${i}`}
+                        className="text-[9px]"
+                        style={{ color: dim, flex: span }}
+                      >
+                        {ml.label}
+                      </span>
+                    );
+                  });
+                })()}
               </div>
 
               <div className="flex gap-0.5">
@@ -781,8 +799,8 @@ function ProofOfWorkChannel({
         style={{ color: accent }}
         variants={itemVariants}
       >
-        {`$ git log --oneline --since="90 days ago" | wc -l
-> ${totalContributions} events tracked
+        {`$ git log --oneline --since="${new Date().getFullYear()}-01-01" | wc -l
+> ${totalContributions} events tracked in ${new Date().getFullYear()}
 > Consistency is key. Ship daily.`}
       </motion.pre>
     </motion.div>
