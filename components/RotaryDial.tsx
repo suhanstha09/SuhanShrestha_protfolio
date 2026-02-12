@@ -118,15 +118,15 @@ export default function RotaryDial({
   const indicatorColor = greenMode ? '#33ff33' : '#ff9f43';
 
   return (
-    <div className="flex flex-col items-center gap-2">
+    <div className="flex flex-col items-center gap-1">
       {/* Channel numbers around the dial */}
-      <div className="relative h-[72px] w-[72px]">
+      <div className="relative h-[64px] w-[64px]">
         {/* Tick marks around the dial */}
         {Array.from({ length: totalChannels }, (_, i) => {
           const angle = (i * degreesPerChannel - 90) * (Math.PI / 180);
-          const radius = 30;
-          const x = 36 + radius * Math.cos(angle);
-          const y = 36 + radius * Math.sin(angle);
+          const radius = 27;
+          const x = 32 + radius * Math.cos(angle);
+          const y = 32 + radius * Math.sin(angle);
           const isActive = i + 1 === currentChannel;
 
           return (

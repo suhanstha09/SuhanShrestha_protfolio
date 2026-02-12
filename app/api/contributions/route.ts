@@ -38,16 +38,15 @@ export async function GET() {
 
     // Parse tooltip text for actual contribution counts per day
     const countMap: Record<string, number> = {};
-    // Match: id="contribution-day-component-X-Y" ... data-date="YYYY-MM-DD"
-    // Then find: for="contribution-day-component-X-Y" ...>N contributions on ...
-    const tdCellRegex = /id="(contribution-day-component-\d+-\d+)"[^>]*data-date="(\d{4}-\d{2}-\d{2})"/g;
+    // HTML order: data-date="YYYY-MM-DD" ... id="contribution-day-component-X-Y"
+    const tdCellRegex = /data-date="(\d{4}-\d{2}-\d{2})"[^>]*id="(contribution-day-component-\d+-\d+)"/g;
     const idToDate: Record<string, string> = {};
     let tdCellMatch;
     while ((tdCellMatch = tdCellRegex.exec(html)) !== null) {
-      idToDate[tdCellMatch[1]] = tdCellMatch[2];
+      idToDate[tdCellMatch[2]] = tdCellMatch[1];
     }
 
-    // Now match tooltips: for="contribution-day-component-X-Y" ...>TEXT</tool-tip>
+    // Match tooltips: for="contribution-day-component-X-Y" ...>TEXT</tool-tip>
     const tipRegex = /for="(contribution-day-component-\d+-\d+)"[^>]*>([^<]*)<\/tool-tip>/g;
     let tipMatch;
     while ((tipMatch = tipRegex.exec(html)) !== null) {

@@ -314,7 +314,7 @@ export default function CRTMonitor() {
 
         {/* ═══════════ SIDE CONTROL PANEL ═══════════ */}
         <div
-          className="hidden md:flex w-[90px] lg:w-[100px] flex-shrink-0 border-l overflow-visible"
+          className="hidden md:flex w-[90px] lg:w-[100px] flex-shrink-0 border-l"
           style={{ borderColor: 'rgba(255,255,255,0.03)' }}
         >
           <TVControls
