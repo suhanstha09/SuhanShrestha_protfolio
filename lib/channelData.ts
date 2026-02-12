@@ -41,7 +41,7 @@ export const experiences = [
     title: 'Frontend Developer',
     company: 'ELZA.FUN',
     duration: '1 Year',
-    current: true,
+    current: false,
     responsibilities: [
       'Developed and maintained responsive, component-based UIs using React/Next.js, TypeScript, and modern CSS, ensuring fast load times and smooth interactions across desktop and mobile.',
       'Built interactive features for quiz and learning experiences (timers, question flows, result views), improving user engagement and completion rates through intuitive layouts and micro-interactions.',
