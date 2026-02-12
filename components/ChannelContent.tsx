@@ -59,6 +59,7 @@ export default function ChannelContent({
       <motion.div
         key={channel}
         className="h-full w-full overflow-y-auto crt-scrollbar p-4 md:p-6 lg:p-8"
+        style={{ fontSize: '1.15rem' }}
         variants={contentVariants}
         initial="hidden"
         animate="visible"
@@ -167,33 +168,25 @@ function AboutChannel({
         </p>
       </motion.div>
 
-      {/* Quick info grid */}
+      {/* Status */}
       <motion.div
-        className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4"
+        className="mt-4"
         variants={itemVariants}
       >
-        {[
-          { label: 'Location', value: personalInfo.location, icon: '📍' },
-          { label: 'Email', value: personalInfo.email, icon: '📧' },
-          { label: 'GitHub', value: `@${personalInfo.github}`, icon: '💻' },
-          { label: 'Status', value: 'Open to opportunities', icon: '🟢' },
-        ].map((item) => (
-          <div
-            key={item.label}
-            className="flex items-center gap-3 rounded-lg p-3"
-            style={{ background: 'rgba(255,159,67,0.05)', border: `1px solid ${accent}22` }}
-          >
-            <span className="text-lg">{item.icon}</span>
-            <div>
-              <p className="text-[10px] uppercase tracking-wider" style={{ color: dim }}>
-                {item.label}
-              </p>
-              <p className="text-xs crt-text" style={{ color: accent }}>
-                {item.value}
-              </p>
-            </div>
+        <div
+          className="flex items-center gap-3 rounded-lg p-4 w-fit"
+          style={{ background: 'rgba(255,159,67,0.05)', border: `1px solid ${accent}22` }}
+        >
+          <span className="text-xl">🟢</span>
+          <div>
+            <p className="text-xs uppercase tracking-wider" style={{ color: dim }}>
+              Status
+            </p>
+            <p className="text-sm crt-text" style={{ color: accent }}>
+              Open to opportunities
+            </p>
           </div>
-        ))}
+        </div>
       </motion.div>
 
       {/* ASCII art decoration */}
