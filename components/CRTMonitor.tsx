@@ -94,6 +94,7 @@ export default function CRTMonitor() {
 
   // ═══════════ Music Controls ═══════════
   const handleMusicToggle = useCallback(() => {
+    if (!isPoweredOn) return;
     if (!musicRef.current) {
       musicRef.current = new Audio('/music.mp3');
       musicRef.current.loop = true;
@@ -105,23 +106,25 @@ export default function CRTMonitor() {
     } else {
       musicRef.current.play().then(() => setIsPlaying(true)).catch(() => {});
     }
-  }, [isPlaying, volume]);
+  }, [isPlaying, volume, isPoweredOn]);
 
   const handleVolumeUp = useCallback(() => {
+    if (!isPoweredOn) return;
     setVolume((prev) => {
       const next = Math.min(1, prev + 0.1);
       if (musicRef.current) musicRef.current.volume = next;
       return next;
     });
-  }, []);
+  }, [isPoweredOn]);
 
   const handleVolumeDown = useCallback(() => {
+    if (!isPoweredOn) return;
     setVolume((prev) => {
       const next = Math.max(0, prev - 0.1);
       if (musicRef.current) musicRef.current.volume = next;
       return next;
     });
-  }, []);
+  }, [isPoweredOn]);
 
   // Cleanup music on unmount
   useEffect(() => {
