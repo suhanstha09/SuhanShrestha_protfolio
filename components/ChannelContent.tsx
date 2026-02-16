@@ -757,46 +757,78 @@ function ProofOfWorkChannel({
             <div className="w-full flex flex-col max-w-full mx-auto">
               {/* Month labels — dynamically computed from data */}
               <div className="flex mb-1 ml-2 sm:ml-8">
-                {(() => {
-                  if (weeks.length === 0) return null;
-                  const monthLabels: { label: string; position: number }[] = [];
-                  const allMonths = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-                  const currentYear = new Date().getFullYear();
-                  let lastMonth = -1;
-                  weeks.forEach((week, wi) => {
-                    if (week.days.length > 0) {
-                      const d = new Date(week.days[0].date);
-                      const m = d.getMonth();
-                      // Only show months from the current year
-                      if (m !== lastMonth && d.getFullYear() === currentYear) {
-                        monthLabels.push({ label: allMonths[m], position: wi });
-                        lastMonth = m;
+                {/* Show all months on sm+ screens, limited on mobile */}
+                <span className="hidden sm:flex w-full">
+                  {(() => {
+                    if (weeks.length === 0) return null;
+                    const monthLabels: { label: string; position: number }[] = [];
+                    const allMonths = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                    const currentYear = new Date().getFullYear();
+                    let lastMonth = -1;
+                    weeks.forEach((week, wi) => {
+                      if (week.days.length > 0) {
+                        const d = new Date(week.days[0].date);
+                        const m = d.getMonth();
+                        if (m !== lastMonth && d.getFullYear() === currentYear) {
+                          monthLabels.push({ label: allMonths[m], position: wi });
+                          lastMonth = m;
+                        }
                       }
+                    });
+                    return monthLabels.map((ml, i) => {
+                      const nextPos = i < monthLabels.length - 1 ? monthLabels[i + 1].position : weeks.length;
+                      const span = nextPos - ml.position;
+                      return (
+                        <span
+                          key={`${ml.label}-${i}`}
+                          className="text-[9px]"
+                          style={{ color: dim, flex: span }}
+                        >
+                          {ml.label}
+                        </span>
+                      );
+                    });
+                  })()}
+                </span>
+                <span className="flex sm:hidden w-full">
+                  {(() => {
+                    if (weeks.length === 0) return null;
+                    const monthLabels: { label: string; position: number }[] = [];
+                    const allMonths = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                    const currentYear = new Date().getFullYear();
+                    let lastMonth = -1;
+                    weeks.forEach((week, wi) => {
+                      if (week.days.length > 0) {
+                        const d = new Date(week.days[0].date);
+                        const m = d.getMonth();
+                        if (m !== lastMonth && d.getFullYear() === currentYear) {
+                          monthLabels.push({ label: allMonths[m], position: wi });
+                          lastMonth = m;
+                        }
+                      }
+                    });
+                    let filteredLabels = monthLabels;
+                    if (monthLabels.length > 2) {
+                      const mid = Math.floor(monthLabels.length / 2);
+                      filteredLabels = [monthLabels[0]];
+                      if (monthLabels.length > 3) filteredLabels.push(monthLabels[mid]);
+                      filteredLabels.push(monthLabels[monthLabels.length - 1]);
                     }
-                  });
-                  // Responsive: show only a few months on mobile
-                  let filteredLabels = monthLabels;
-                  if (typeof window !== 'undefined' && window.innerWidth < 640 && monthLabels.length > 2) {
-                    // Always show first and last, and one in the middle if enough months
-                    const mid = Math.floor(monthLabels.length / 2);
-                    filteredLabels = [monthLabels[0]];
-                    if (monthLabels.length > 3) filteredLabels.push(monthLabels[mid]);
-                    filteredLabels.push(monthLabels[monthLabels.length - 1]);
-                  }
-                  return filteredLabels.map((ml, i) => {
-                    const nextPos = i < filteredLabels.length - 1 ? filteredLabels[i + 1].position : weeks.length;
-                    const span = nextPos - ml.position;
-                    return (
-                      <span
-                        key={`${ml.label}-${i}`}
-                        className="text-[9px]"
-                        style={{ color: dim, flex: span }}
-                      >
-                        {ml.label}
-                      </span>
-                    );
-                  });
-                })()}
+                    return filteredLabels.map((ml, i) => {
+                      const nextPos = i < filteredLabels.length - 1 ? filteredLabels[i + 1].position : weeks.length;
+                      const span = nextPos - ml.position;
+                      return (
+                        <span
+                          key={`${ml.label}-${i}`}
+                          className="text-[9px]"
+                          style={{ color: dim, flex: span }}
+                        >
+                          {ml.label}
+                        </span>
+                      );
+                    });
+                  })()}
+                </span>
               </div>
 
               <div className="flex gap-0.5 flex-row flex-wrap">
