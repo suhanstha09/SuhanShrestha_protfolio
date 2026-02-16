@@ -751,12 +751,12 @@ function ProofOfWorkChannel({
 
           {/* Contribution Calendar Grid */}
           <motion.div
-            className="overflow-x-auto"
+            className="overflow-x-auto w-full"
             variants={itemVariants}
           >
-            <div className="min-w-[700px]">
+            <div className="w-full min-w-0 max-w-full sm:min-w-[700px] mx-auto">
               {/* Month labels — dynamically computed from data */}
-              <div className="flex mb-1 ml-8">
+              <div className="flex mb-1 ml-4 sm:ml-8">
                 {(() => {
                   if (weeks.length === 0) return null;
                   const monthLabels: { label: string; position: number }[] = [];
@@ -830,7 +830,7 @@ function ProofOfWorkChannel({
               </div>
 
               {/* Legend */}
-              <div className="flex items-center gap-1 mt-3 justify-end">
+              <div className="flex items-center gap-1 mt-3 justify-end pr-2 sm:pr-0">
                 <span className="text-[9px] mr-1" style={{ color: dim }}>
                   Less
                 </span>
