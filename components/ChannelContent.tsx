@@ -774,8 +774,17 @@ function ProofOfWorkChannel({
                       }
                     }
                   });
-                  return monthLabels.map((ml, i) => {
-                    const nextPos = i < monthLabels.length - 1 ? monthLabels[i + 1].position : weeks.length;
+                  // Responsive: show only a few months on mobile
+                  let filteredLabels = monthLabels;
+                  if (typeof window !== 'undefined' && window.innerWidth < 640 && monthLabels.length > 2) {
+                    // Always show first and last, and one in the middle if enough months
+                    const mid = Math.floor(monthLabels.length / 2);
+                    filteredLabels = [monthLabels[0]];
+                    if (monthLabels.length > 3) filteredLabels.push(monthLabels[mid]);
+                    filteredLabels.push(monthLabels[monthLabels.length - 1]);
+                  }
+                  return filteredLabels.map((ml, i) => {
+                    const nextPos = i < filteredLabels.length - 1 ? filteredLabels[i + 1].position : weeks.length;
                     const span = nextPos - ml.position;
                     return (
                       <span
