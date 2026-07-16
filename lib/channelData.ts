@@ -104,16 +104,26 @@ export const experiences = [
 
 /** Technical skills categorized */
 export const technicalSkills = [
+  { name: 'Figma' , level:100, category: 'frontend'},
   { name: 'Next.js', level: 90, category: 'frontend' },
   { name: 'React', level: 90, category: 'frontend' },
   { name: 'TypeScript', level: 85, category: 'language' },
   { name: 'JavaScript', level: 90, category: 'language' },
   { name: 'HTML/CSS', level: 95, category: 'frontend' },
+  { name: 'TailwindCSS / ShadCN / Redux' , level:100, category: 'frontend'},
   { name: 'Django', level: 60, category: 'backend' },
   { name: 'Node.js', level: 65, category: 'backend' },
+  { name: 'AWS' , level:100, category: 'cloud'},
+  { name: 'Express.js' , level:100, category: 'cloud'},
+  { name: 'PostgreSQL/ MongoDB/ Mysql/ SQlite' , level:100, category: 'database'},
   { name: 'Figma', level: 80, category: 'design' },
-  { name: 'Photoshop', level: 75, category: 'design' },
+  { name: 'Photoshop / Illustrator', level: 75, category: 'design' },
   { name: 'FL Studio', level: 70, category: 'creative' },
+  { name: 'Vercel/ Railway', level: 70, category: 'deployment' }, 
+  { name: 'Docker', level: 70, category: 'deployment' }, 
+  
+  
+
 ];
 
 /** Non-technical skills */
