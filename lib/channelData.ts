@@ -109,6 +109,7 @@ export const technicalSkills = [
   { name: 'React', level: 90, category: 'frontend' },
   { name: 'TypeScript', level: 85, category: 'language' },
   { name: 'JavaScript', level: 90, category: 'language' },
+  { name: 'Python', level: 90, category: 'language' },
   { name: 'HTML/CSS', level: 95, category: 'frontend' },
   { name: 'TailwindCSS / ShadCN / Redux' , level:100, category: 'frontend'},
   { name: 'Django', level: 60, category: 'backend' },
