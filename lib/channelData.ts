@@ -27,7 +27,11 @@ export const channels: Channel[] = [
 export const personalInfo = {
   name: 'Suhan Shrestha',
   title: 'UI/UX Designer & Full Stack Developer',
-  bio: `A Full-Stack Developer pursuing a Bachelor's degree in CSIT, with hands-on experience designing and shipping production-grade web applications end-to-end from pixel-perfect frontends to scalable backend APIs, database architecture, and cloud deployment. Comfortable across the full development lifecycle including CI/CD, containerization, and Linux-based environments. Building things that work, look good, and scale—always shipping something new.`,
+  bio: `A Full-Stack Developer with hands-on experience designing and shipping production-grade web applications
+end-to-end, from pixel-perfect frontends to scalable backend APIs, database architecture, and cloud
+deployment. I also integrate AI/ML into real products, from model-powered features to the interfaces around
+them. Comfortable across the full development lifecycle including CI/CD, containerization, and Linux-based
+environments. I build things that work, look good, and scale, and I’m always shipping something new.`,
   email: 'scubashrestha4@gmail.com',
   location: 'Deepnagar, Butwal, Nepal',
   phone: '9847154781',
@@ -42,7 +46,7 @@ export const experiences = [
   {
     title: 'Senior Full Stack Developer',
     company: 'Inovex Tech & Media',
-    duration: 'Jan 2025 – Jun 2026',
+    duration: 'May 2023 – Jun 2026',
     location: 'Drivetole, Tilottama',
     current: false,
     responsibilities: [
@@ -54,7 +58,7 @@ export const experiences = [
   {
     title: 'Full Stack Developer',
     company: 'Nava Tech & Media',
-    duration: 'Jul 2025 – Jan 2026',
+    duration: 'Jul 2022 – April 2026',
     location: 'Manigram, Tilottama',
     current: false,
     responsibilities: [
@@ -66,38 +70,12 @@ export const experiences = [
   {
     title: 'Frontend Developer',
     company: 'ELZA.FUN',
-    duration: 'Jun 2024 – Mar 2025',
+    duration: 'Feb 2022 – Jul 2022',
     current: false,
     responsibilities: [
       'Developed and maintained responsive, component-based UIs using React/Next.js, TypeScript, and modern CSS',
       'Built interactive features for quiz and learning experiences (timers, question flows, result views), improving user engagement through intuitive layouts',
       'Collaborated closely with designers and backend engineers to translate Figma designs into pixel-perfect interfaces and integrate APIs',
-    ],
-  },
-  {
-    title: 'Graphic Designer',
-    company: 'Nava Tech & Media',
-    duration: 'May 2025 – Jun 2026',
-    location: 'Tilottama',
-    current: false,
-    responsibilities: [
-      'Designed and delivered high-quality visual content for branding, digital marketing, and client engagement initiatives',
-      'Produced creative assets including social media campaigns, advertisements, presentations, and promotional materials',
-      'Maintained brand consistency across multiple projects while ensuring alignment with client requirements',
-      'Contributed to UI/UX concepts, marketing campaigns, and digital content strategies to enhance audience engagement',
-    ],
-  },
-  {
-    title: 'Graphic Designer',
-    company: 'Four-Bit',
-    duration: 'Jan 2024 – Mar 2025',
-    location: 'Butwal',
-    current: false,
-    responsibilities: [
-      'Designed social media creatives, advertising materials, and brand assets for multiple clients across different industries',
-      'Created logos, banners, posters, brochures, and marketing collateral while maintaining brand consistency',
-      'Produced content optimized for Facebook, Instagram, LinkedIn, and other digital platforms',
-      'Managed multiple design projects simultaneously while meeting deadlines and maintaining high quality standards',
     ],
   },
 ];
@@ -118,13 +96,8 @@ export const technicalSkills = [
   { name: 'Express.js' , level:100, category: 'cloud'},
   { name: 'PostgreSQL/ MongoDB/ Mysql/ SQlite' , level:100, category: 'database'},
   { name: 'Figma', level: 80, category: 'design' },
-  { name: 'Photoshop / Illustrator', level: 75, category: 'design' },
-  { name: 'FL Studio', level: 70, category: 'creative' },
   { name: 'Vercel/ Railway', level: 70, category: 'deployment' }, 
   { name: 'Docker', level: 70, category: 'deployment' }, 
-  
-  
-
 ];
 
 /** Non-technical skills */
