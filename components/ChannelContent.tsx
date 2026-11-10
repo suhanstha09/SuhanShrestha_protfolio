@@ -259,12 +259,7 @@ function AboutChannel({
         style={{ color: accent }}
         variants={itemVariants}
       >
-        {`
-  ╔══════════════════════════════════════╗
-  ║  System Status: ONLINE              ║
-  ║  Signal: STRONG ████████████░░ 85%  ║
-  ║  Broadcast: Portfolio v2.0          ║
-  ╚══════════════════════════════════════╝`}
+        
       </motion.pre>
     </motion.div>
   );
@@ -374,9 +369,9 @@ function ExperienceChannel({
         variants={itemVariants}
       >
         <p>$ cat /var/log/career.log</p>
-        <p>{'>'} Total Experience: 1 year</p>
-        <p>{'>'} Specialization: Frontend Development</p>
-        <p>{'>'} Growth Vector: Full Stack ↑</p>
+        <p>{'>'} Total Experience: 6 years</p>
+        <p>{'>'} Specialization: Software Development</p>
+        <p>{'>'} Growth Vector: AI/ML Engineer ↑</p>
       </motion.div>
     </motion.div>
   );
@@ -481,13 +476,7 @@ function SkillsChannel({
         style={{ color: accent }}
         variants={itemVariants}
       >
-        {`
-  ┌─ Skill Matrix ──────────────┐
-  │ Frontend  ██████████░  95%  │
-  │ Backend   ██████░░░░░  60%  │
-  │ Design    ████████░░░  80%  │
-  │ Creative  ███████░░░░  70%  │
-  └─────────────────────────────┘`}
+        
       </motion.pre>
     </motion.div>
   );
