@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 
 const GITHUB_USERNAME = 'suhanstha09';
 
+export const dynamic = 'force-dynamic';
+
 /** Excluded pinned repos (case-insensitive match on repo name) */
 const EXCLUDED = ['netflixclone', 'suhan-dropbox-clone', 'netflix-clone', 'dropbox-clone'];
 
@@ -100,7 +102,7 @@ export async function GET() {
                 Accept: 'application/vnd.github.v3+json',
                 'User-Agent': 'Mozilla/5.0 (compatible; PortfolioBot/1.0)',
               },
-              next: { revalidate: 3600 },
+              cache: 'no-store',
             }
           );
           if (!repoRes.ok) return null;
@@ -123,7 +125,14 @@ export async function GET() {
 
     const finalRepos = repoDetails.filter(Boolean) as PinnedRepo[];
 
-    return NextResponse.json({ repos: finalRepos });
+    return NextResponse.json(
+      { repos: finalRepos },
+      {
+        headers: {
+          'Cache-Control': 'no-store, max-age=0',
+        },
+      }
+    );
   } catch (error) {
     console.error('Failed to fetch pinned repos:', error);
     return NextResponse.json({ repos: [] }, { status: 500 });

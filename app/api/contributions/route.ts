@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 
+export const dynamic = 'force-dynamic';
+
 const GITHUB_USERNAME = 'suhanstha09';
 
 export async function GET() {
@@ -12,7 +14,7 @@ export async function GET() {
           'User-Agent': 'Mozilla/5.0',
           Accept: 'text/html',
         },
-        next: { revalidate: 3600 },
+        cache: 'no-store',
       }
     );
 
@@ -80,7 +82,14 @@ export async function GET() {
       weeks.push({ days });
     }
 
-    return NextResponse.json({ weeks, totalContributions });
+    return NextResponse.json(
+      { weeks, totalContributions },
+      {
+        headers: {
+          'Cache-Control': 'no-store, max-age=0',
+        },
+      }
+    );
   } catch (error) {
     console.error('Contributions API error:', error);
     return NextResponse.json(

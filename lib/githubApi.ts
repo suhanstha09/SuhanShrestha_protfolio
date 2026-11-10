@@ -60,7 +60,9 @@ export interface ContributionData {
  */
 export async function fetchPinnedRepos(): Promise<PinnedRepo[]> {
   try {
-    const response = await fetch('/api/pinned-repos');
+    const response = await fetch('/api/pinned-repos', {
+      cache: 'no-store',
+    });
     if (!response.ok) {
       throw new Error(`Pinned repos API error: ${response.status}`);
     }
@@ -78,7 +80,9 @@ export async function fetchPinnedRepos(): Promise<PinnedRepo[]> {
  */
 export async function fetchContributionData(): Promise<ContributionData> {
   try {
-    const response = await fetch('/api/contributions');
+    const response = await fetch('/api/contributions', {
+      cache: 'no-store',
+    });
 
     if (!response.ok) {
       throw new Error(`API error: ${response.status}`);
@@ -127,7 +131,7 @@ export async function fetchGitHubProfile() {
       `${GITHUB_API_BASE}/users/${GITHUB_USERNAME}`,
       {
         headers: { Accept: 'application/vnd.github.v3+json' },
-        next: { revalidate: 3600 },
+        cache: 'no-store',
       }
     );
 
