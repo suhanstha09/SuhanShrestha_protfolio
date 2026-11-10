@@ -58,7 +58,7 @@ export const experiences = [
   {
     title: 'Full Stack Developer',
     company: 'Nava Tech & Media',
-    duration: 'Jul 2022 – April 2026',
+    duration: 'Jul 2022 – April 2023',
     location: 'Manigram, Tilottama',
     current: false,
     responsibilities: [
