@@ -56,6 +56,9 @@ export const metadata: Metadata = {
     description: 'Retro CRT TV Portfolio — Full Stack Developer',
     images: ['https://suhan-shrestha-protfolio.vercel.app/logo.png'],
   },
+   verification: {
+    google: "SbHthY_um5y4sUQoyQuJXN_r9ybd4vd4x0LITp-0n1E", // just the content value, not the full tag
+  },
 };
 
 export default function RootLayout({
